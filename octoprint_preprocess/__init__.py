@@ -18,9 +18,9 @@ import re
 class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
                        octoprint.plugin.AssetPlugin,
                        octoprint.plugin.TemplatePlugin):
- 	def __init__(self):
- 		self.logger = logging.getLogger(__name__)
- 		self.logger.setLevel(logging.DEBUG)
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
 
     def get_settings_defaults(self):
         return dict(
@@ -52,8 +52,8 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
 
     class SearchReplace(octoprint.filemanager.util.LineProcessorStream):
         def process_line(self, line):
-        	self.logger = logging.getLogger(__name__)
- 			self.logger.setLevel(logging.DEBUG)
+            self.logger = logging.getLogger(__name__)
+            self.logger.setLevel(logging.DEBUG)
             search_regex = r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n"
             replace_string = "; DELETED TEMP: "
             match = re.search(search_regex, line)
