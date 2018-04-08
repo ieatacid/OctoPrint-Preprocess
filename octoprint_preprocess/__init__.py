@@ -59,7 +59,7 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
             match = re.search(search_regex, line)
             if match:
                 line = replace_string + line
-                self.logger.log("SearchReplace.process_line match: " + line)
+                self.logger.debug("SearchReplace.process_line match: " + line)
 
             return line
 
@@ -67,7 +67,7 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
         if not octoprint.filemanager.valid_file_type(path, type="gcode"):
             return file_object
 
-        self.logger.log("preprocess_gcode")
+        self.logger.debug("preprocess_gcode")
         return octoprint.filemanager.util.StreamWrapper(file_object.filename, self.SearchReplace(file_object.stream()))
 
 
