@@ -57,7 +57,13 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
         def process_line(self, line):
             self._logger = logging.getLogger(__name__)
             self._logger.setLevel(logging.DEBUG)
-            self.search_regex = re.compile(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n")
+            self.search_regex = re.compile(r"M190 S\d{2}\r?\n|M109 S\d{3}\r?\n|M104 S\d{3}\r?\n")
+            
+            match = self.search_regex.match(line)
+            if match:
+            	line = "; DELETED TEMP: " + line
+                self._logger.info(" ## re match: " + line)
+
             # self.replace_string = "; DELETED TEMP: "
             # match = re.search(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n", line)
 
@@ -66,10 +72,10 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
             #     self._logger.info("## re match: " + line)
                 # line = "; DELETED TEMP: " + line
 
-            match = re.search(r"M190 S\d{2}\r?\n|M109 S\d{3}\r?\n|M104 S\d{3}\r?\n", line)
-            if match:
-            	line = "; DELETED TEMP: " + line
-                self._logger.info("3 ## re match: " + line)
+            # match = re.search(r"M190 S\d{2}\r?\n|M109 S\d{3}\r?\n|M104 S\d{3}\r?\n", line)
+            # if match:
+            # 	line = "; DELETED TEMP: " + line
+            #     self._logger.info("3 ## re match: " + line)
 
             return line
 
