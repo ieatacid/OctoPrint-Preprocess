@@ -60,6 +60,7 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
             self.search_regex = re.compile(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n")
             # self.replace_string = "; DELETED TEMP: "
             # match = re.search(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n", line)
+            self._logger.info("process_line: " + line)
             match = self.search_regex.match(line)
             if match:
                 self._logger.info("## re match: " + line)
