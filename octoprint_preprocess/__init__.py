@@ -61,24 +61,24 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
             # self.replace_string = "; DELETED TEMP: "
             # match = re.search(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n", line)
 
-            match = self.search_regex.match(line)
+            match = re.search(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n", line)
             if match:
                 self._logger.info("## re match: " + line)
                 # line = "; DELETED TEMP: " + line
 
-            match = re.search(r"M190 S\d{2}\r|M109 S\d{3}\r|M104 S\d{3}\r")
+            match = re.search(r"M190 S\d{2}\r|M109 S\d{3}\r|M104 S\d{3}\r", line)
             if match:
                 self._logger.info("2 ## re match: " + line)
 
-            match = re.search(r"M190 S\d{2}\n|M109 S\d{3}\n|M104 S\d{3}\n")
+            match = re.search(r"M190 S\d{2}\n|M109 S\d{3}\n|M104 S\d{3}\n", line)
             if match:
                 self._logger.info("3 ## re match: " + line)
 
-            match = re.search(r"M190 S\d{2}\n\n|M109 S\d{3}\n\n|M104 S\d{3}\n\n")
+            match = re.search(r"M190 S\d{2}\n\n|M109 S\d{3}\n\n|M104 S\d{3}\n\n", line)
             if match:
                 self._logger.info("4 ## re match: " + line)
 
-            match = re.search(r"M190 S\d{2}\r\r|M109 S\d{3}\r\r|M104 S\d{3}\r\r")
+            match = re.search(r"M190 S\d{2}\r\r|M109 S\d{3}\r\r|M104 S\d{3}\r\r", line)
             if match:
                 self._logger.info("5 ## re match: " + line)
 
