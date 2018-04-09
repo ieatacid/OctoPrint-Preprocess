@@ -9,6 +9,3 @@ or manually using this URL:
 
     https://github.com/ieatacid/OctoPrint-Preprocess/archive/master.zip
 
-## Configuration
-
-**TODO:** Describe your plugin's configuration options (if any).
