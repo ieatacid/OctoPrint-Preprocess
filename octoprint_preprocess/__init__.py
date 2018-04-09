@@ -18,9 +18,12 @@ import re
 class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
                        octoprint.plugin.AssetPlugin,
                        octoprint.plugin.TemplatePlugin):
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
+
+    def __init__(self, *args, **kwargs):
+        self._logger = logging.getLogger(__name__)
+        self._logger.setLevel(logging.DEBUG)
+        self.search_regex = re.compile(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n")
+        self.replace_string = "; DELETED TEMP: "
 
     def get_settings_defaults(self):
         return dict(
@@ -52,14 +55,14 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
 
     class SearchReplace(octoprint.filemanager.util.LineProcessorStream):
         def process_line(self, line):
-            self.logger = logging.getLogger(__name__)
-            self.logger.setLevel(logging.DEBUG)
-            search_regex = r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n"
-            replace_string = "; DELETED TEMP: "
-            match = re.search(search_regex, line)
+            self._logger = logging.getLogger(__name__)
+            self._logger.setLevel(logging.DEBUG)
+            self.search_regex = re.compile(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n")
+            self.replace_string = "; DELETED TEMP: "
+            match = re.search(r"M190 S\d{2}\r\n|M109 S\d{3}\r\n|M104 S\d{3}\r\n", line)
             if match:
-                line = replace_string + line
-                self.logger.debug("SearchReplace.process_line match: " + line)
+                self._logger.info("## re match: " + line)
+                line = self.replace_string + line
 
             return line
 
@@ -67,7 +70,10 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
         if not octoprint.filemanager.valid_file_type(path, type="gcode"):
             return file_object
 
-        self.logger.debug("preprocess_gcode")
+        import os
+        name, _ = os.path.splitext(file_object.filename)
+        self._logger.info("preprocess_gcode file name: " + name)    
+
         return octoprint.filemanager.util.StreamWrapper(file_object.filename, self.SearchReplace(file_object.stream()))
 
 
