@@ -70,7 +70,11 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
             match = self.search_regex.match(line)
             if match:
                 self._logger.info("2 ## re match: " + line)
-                # line = "; DELETED TEMP: " + line
+
+            self.search_regex = re.compile(r"M190 S\d{2}|M109 S\d{3}|M104 S\d{3}")
+            match = self.search_regex.match(line)
+            if match:
+                self._logger.info("3 ## re match: " + line)
 
             return line
 
