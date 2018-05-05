@@ -5,25 +5,41 @@
  * License: AGPLv3
  */
 $(function() {
-    function PreprocessViewModel(parameters) {
-        var self = this;
+	function PreprocessViewModel(parameters) {
+		var self = this;
 
-        // assign the injected parameters, e.g.:
-        // self.loginStateViewModel = parameters[0];
-        // self.settingsViewModel = parameters[1];
+		self.settingsViewModel = parameters[0];
 
-        // TODO: Implement your plugin's view model here.
-    }
+		self.searchReplace = ko.observableArray([]);
 
-    /* view model class, parameters for constructor, container to bind to
-     * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
-     * and a full list of the available options.
-     */
-    OCTOPRINT_VIEWMODELS.push({
-        construct: PreprocessViewModel,
-        // ViewModels your plugin depends on, e.g. loginStateViewModel, settingsViewModel, ...
-        dependencies: [ /* "loginStateViewModel", "settingsViewModel" */ ],
-        // Elements to bind to, e.g. #settings_plugin_PreProcess, #tab_plugin_PreProcess, ...
-        elements: [ /* ... */ ]
-    });
+		self.addSearchReplace = function(data) {
+			console.log("addSearchReplace: ");
+			console.log(data);
+			self.searchReplace.push({name: "", regexp: "", replaceString: ""})
+		}
+
+		self.removeSearchReplace = function(filter) {
+			console.log("removeSearchReplace: ");
+			console.log(filter);
+			self.searchReplace.remove(filter);
+		}
+
+		self.onBeforeBinding = function () {
+			console.log("onBeforeBinding");
+			// self.searchReplace(self.settingsViewModel.settings.plugins.PreProcess.searchReplace());
+			self.searchReplace(self.settingsViewModel.settings.plugins.PreProcess.searchReplace.slice(0));
+		};
+
+		self.onSettingsBeforeSave = function () {
+			console.log("onSettingsBeforeSave");
+			// self.searchReplace(self.settingsViewModel.settings.plugins.PreProcess.searchReplace());
+			self.settingsViewModel.settings.plugins.TerminalCommands.controls(self.searchReplace.slice(0));
+		};
+	}
+
+	OCTOPRINT_VIEWMODELS.push([
+		PreprocessViewModel,
+		[ "settingsViewModel" ],
+		[ "#settings_plugin_PreProcess" ]
+	]);
 });

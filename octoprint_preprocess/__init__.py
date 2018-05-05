@@ -1,34 +1,26 @@
 # coding=utf-8
 from __future__ import absolute_import
 
-### (Don't forget to remove me)
-# This is a basic skeleton for your plugin's __init__.py. You probably want to adjust the class name of your plugin
-# as well as the plugin mixins it's subclassing from. This is really just a basic skeleton to get you started,
-# defining your plugin as a template plugin, settings and asset plugin. Feel free to add or remove mixins
-# as necessary.
-#
-# Take a look at the documentation on what other plugin mixins are available.
 
 import octoprint.plugin
 import octoprint.filemanager
-import re
+import regex
+import logging
 
 
 class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
                        octoprint.plugin.AssetPlugin,
+                       octoprint.plugin.StartupPlugin,
                        octoprint.plugin.TemplatePlugin):
 
     def get_settings_defaults(self):
         return dict(
-            searchStr="",
-            replaceStr="",
+            searchReplace=[{'name':'Example','regexp':'M190 S\d{2}\r\n','replaceString':'; DELETED TEMP: $1'}]
         )
 
     def get_assets(self):
         return dict(
-            # js=["js/PreProcess.js"],
-            # css=["css/PreProcess.css"],
-            # less=["less/PreProcess.less"]
+            js=["js/PreProcess.js"],
         )
 
     def get_update_information(self):
@@ -46,13 +38,33 @@ class PreprocessPlugin(octoprint.plugin.SettingsPlugin,
             )
         )
 
+    def on_after_startup(self):
+        for key in sorted(self._settings.get(["searchReplace"])):
+            self._logger.info("\n    name:%s \n    regexp:%s \n    replaceString:%s" % (key["name"], key["regexp"], key["replaceString"]))
+
     class SearchReplace(octoprint.filemanager.util.LineProcessorStream):
         def process_line(self, line):
-            search_regex = re.compile(r"M190 S\d{2}\r?\n|M109 S\d{3}\r?\n|M104 S\d{3}\r?\n")
-            
-            match = search_regex.match(line)
-            if match:
-            	line = "; DELETED TEMP: " + line
+            def displaymatch(match):
+                if match is None:
+                    return None
+                return '                          Match: %r, groups=%r, lastindex=%r' % (match.group(), match.groups(), match.lastindex)
+
+            plugin_settings = octoprint.plugin.PluginSettings(__plugin_implementation__, "PreProcessPlugin")
+
+            for key in sorted(plugin_settings._settings.get(["searchReplace"])):
+                match = regex.compile(key["regexp"]).match(line)
+
+                if match:
+                    print(displaymatch(match))
+                    replaceString = key["replaceString"]
+                    pos = replaceString.find("$1")
+                    if pos != -1:
+                        line = replaceString[:pos] + match.group()
+                    else:
+                        line = replaceString
+
+                    if line.find("\n") == -1:
+                        line += "\r\n"
 
             return line
 
