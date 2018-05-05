@@ -1,6 +1,8 @@
-# OctoPrint-Preprocess
+ # OctoPrint-Preprocess
 
-**TODO:** Describe what your plugin does.
+Preprocess uploaded gcode using regex search and replace.
+
+In its current state it just strips the temperatures that Cura adds before my custom start code. Hopefully I get some time to make it customizable.
 
 ## Setup
 
@@ -9,9 +11,3 @@ or manually using this URL:
 
     https://github.com/ieatacid/OctoPrint-Preprocess/archive/master.zip
 
-**TODO:** Describe how to install your plugin, if more needs to be done than just installing it via pip or through
-the plugin manager.
-
-## Configuration
-
-**TODO:** Describe your plugin's configuration options (if any).
